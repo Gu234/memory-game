@@ -1,51 +1,48 @@
 import React, { Component } from 'react';
 import './App.css';
 
-export default class extends Component {
+function shuffle(array) {
+  let currentIndex = array.length, temporaryValue, randomIndex;
 
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+export default class extends Component {
   constructor() {
     super();
-    this.number_of_pairs = 10;
-    this.gameState = 0;
-    this.firstCardIndex = null;
-    this.secondCardIndex = null;
-    this.disabled_cards = Array(this.number_of_pairs * 2).fill(false);
+    const numberOfPairs = 10;
+    const disabledCards = Array(numberOfPairs * 2).fill(false);
 
-    this.cards_content = [];
-    for (let i = 0; i < this.number_of_pairs; i++) {
-
-      this.cards_content.push(i);
-      this.cards_content.push(i);
-
+    const cardsContent = [];
+    for (let i = 0; i < numberOfPairs; i++) {
+      cardsContent.push(i);
+      cardsContent.push(i);
     }
-    this.shuffle(this.cards_content);
-
+    shuffle(cardsContent);
 
     this.state = {
-      cards: Array(this.number_of_pairs * 2).fill(false)
+      gameState: 0,
+      firstCardIndex: null,
+      secondCardIndex: null,
+      cards: Array(numberOfPairs * 2).fill(false),
+      disabledCards,
+      cardsContent
     }
 
   }
-
-  shuffle(array) {
-    let currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-  }
-
 
   render() {
     return <>
@@ -56,32 +53,24 @@ export default class extends Component {
   }
 
   renderCards() {
-    const cards = []
-    for (let i = 0; i < this.state.cards.length; i++)
-      cards.push(this.renderCard(i))
-    return cards
+    return this.state.cards.map(this.renderCard)
   }
 
-  renderCard(i) {
+  renderCard = (isVisible, i) => {
     return <div
-      className={this.cardClassName(i)}
+      className={this.cardClassName(isVisible)}
       key={Math.random()}
-      onClick={() => this.advanceGame(i)}>{this.cards_content[i]}</div>
+      onClick={() => this.advanceGame(i)}>{this.state.cardsContent[i]}</div>
   }
 
-  cardClassName(index) {
-    if (this.isCardVisible(index))
+  cardClassName(isVisible) {
+    if (isVisible)
       return 'card'
     else
       return 'card hidden'
   }
 
-  isCardVisible(i) {
-    return this.state.cards[i]
-  }
-
   flipCard = (i) => {
-
     this.setState((prevState) => {
       const updatedCards = [...prevState.cards]
       updatedCards[i] = !prevState.cards[i]
@@ -90,7 +79,7 @@ export default class extends Component {
   }
 
   advanceGame(i) {
-    switch (this.gameState) {
+    switch (this.state.gameState) {
       case 0:
         this.runGameFirstStep(i)
         break;
@@ -114,23 +103,28 @@ export default class extends Component {
   }
 
   disableCard(index) {
-    this.disabled_cards[index] = true
+    this.setState(({ disabledCards }) => {
+      const cards = [...disabledCards]
+      cards[index] = true
+      return { disabledCards: cards }
+    })
   }
 
   resetGameState() {
-    this.gameState = 0
+    this.setState({ gameState: 0 })
+
   }
 
   incrementGameState() {
-    this.gameState++
+    this.setState(({ gameState }) => ({ gameState: gameState + 1 }))
   }
 
   setFirstCardIndex(i) {
-    this.firstCardIndex = i
+    this.setState({ firstCardIndex: i })
   }
 
   setSecondCardIndex(i) {
-    this.secondCardIndex = i
+    this.setState({ secondCardIndex: i })
   }
 
   areCardsContentsEqual(firstIndex, secondIndex) {
@@ -138,36 +132,42 @@ export default class extends Component {
   }
 
   getCardContent(i) {
-    return this.cards_content[i]
+    return this.state.cardsContent[i]
   }
 
   runGameFirstStep(i) {
-    if (this.disabled_cards[i]) return
+    if (this.isCardDisabled(i)) return
     this.flipCard(i)
     this.setFirstCardIndex(i)
     this.incrementGameState()
-
   }
 
   runGameSecondStep(i) {
+    if (this.isCardDisabled(i)) return
+    if (i === this.state.firstCardIndex) return
 
-    if (this.disabled_cards[i]) return
-    if (i === this.firstCardIndex) return
     this.flipCard(i);
-    this.setSecondCardIndex(i);
-    if (this.areCardsContentsEqual(this.firstCardIndex, this.secondCardIndex)) {
-      this.disableCard(this.firstCardIndex);
-      this.disableCard(this.secondCardIndex);
+
+    const { firstCardIndex } = this.state
+    if (this.areCardsContentsEqual(firstCardIndex, i)) {
+      this.disableCard(firstCardIndex);
+      this.disableCard(i);
       this.resetGameState();
     }
     else
       this.incrementGameState();
+
+    this.setSecondCardIndex(i);
   }
 
   runGameThirdStep() {
-    this.flipTwoCards(this.firstCardIndex, this.secondCardIndex);
+    const { firstCardIndex, secondCardIndex } = this.state
+    this.flipTwoCards(firstCardIndex, secondCardIndex);
     this.resetGameState();
   }
 
+  isCardDisabled(i) {
+    return this.state.disabledCards[i]
+  }
 
 }
