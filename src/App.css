@@ -9,6 +9,7 @@
   width: 50px;
   margin: 5px;
   background-color: green;
+  user-select: none;
 }
 
 .back{
@@ -17,4 +18,5 @@
 
 .hidden{
   background-color: gray;
+  color: transparent;
 }
