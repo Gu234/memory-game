@@ -3,15 +3,49 @@ import './App.css';
 
 export default class extends Component {
 
-  state = {
-    cards_content: ['yellow', 'red', 'blue', 'blue', 'red'],
-    number_of_cards: 10,
-    cards: Array(5).fill(false),
-    gameState: 0,
-    firstCardIndex: null,
-    secondCardIndex: null,
-    comparedCardContentsAreTheSame: null
+  constructor() {
+    super();
+    this.number_of_pairs = 10;
+    this.gameState = 0;
+    this.firstCardIndex = null;
+    this.secondCardIndex = null;
+    this.disabled_cards = Array(this.number_of_pairs * 2).fill(false);
+
+    this.cards_content = [];
+    for (let i = 0; i < this.number_of_pairs; i++) {
+
+      this.cards_content.push(i);
+      this.cards_content.push(i);
+
+    }
+    this.shuffle(this.cards_content);
+
+
+    this.state = {
+      cards: Array(this.number_of_pairs * 2).fill(false)
+    }
+
   }
+
+  shuffle(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
 
   render() {
     return <>
@@ -32,7 +66,7 @@ export default class extends Component {
     return <div
       className={this.cardClassName(i)}
       key={Math.random()}
-      onClick={() => this.advanceGame(i)}>{this.state.cards_content[i]}</div>
+      onClick={() => this.advanceGame(i)}>{this.cards_content[i]}</div>
   }
 
   cardClassName(index) {
@@ -49,30 +83,26 @@ export default class extends Component {
   flipCard = (i) => {
     const updatedCards = [...this.state.cards];
     updatedCards[i] = !this.state.cards[i];
-    this.setState({ cards: updatedCards })
+    this.setState(() => ({ cards: updatedCards }))
   }
 
-
   advanceGame(i) {
-    const { gameState } = this.state
-    switch (gameState) {
+    switch (this.gameState) {
       case 0:
+        if (this.disabled_cards[i]) break;
         this.flipCard(i);
         this.setFirstCardIndex(i);
-        console.log(this.state.firstCardIndex);
-
         this.incrementGameState();
         break;
 
       case 1:
-        if (i === this.state.firstCardIndex)
-          break;
-
+        if (this.disabled_cards[i]) break;
+        if (i === this.firstCardIndex) break;
         this.flipCard(i);
         this.setSecondCardIndex(i);
-        this.setFirstAndSecondCardsContentTheSame();
-
-        if (this.state.comparedCardContentsAreTheSame) {
+        if (this.areCardsContentsEqual(this.firstCardIndex, this.secondCardIndex)) {
+          this.disableCard(this.firstCardIndex);
+          this.disableCard(this.secondCardIndex);
           this.resetGameState();
           break;
         }
@@ -81,7 +111,7 @@ export default class extends Component {
         break;
 
       case 2:
-        this.flipFirstAndSecondCards();
+        this.flipTwoCards(this.firstCardIndex, this.secondCardIndex);
         this.resetGameState();
         break;
       default:
@@ -89,37 +119,39 @@ export default class extends Component {
     }
   }
 
-  flipFirstAndSecondCards() {
-    this.flipCard(this.state.firstCardIndex);
-    this.flipCard(this.state.secondCardIndex);
+  flipTwoCards(firstCardIndex, secondCardIndex) {
+    const updatedCards = [...this.state.cards];
+    updatedCards[firstCardIndex] = !this.state.cards[firstCardIndex];
+    updatedCards[secondCardIndex] = !this.state.cards[secondCardIndex];
+    this.setState(() => ({ cards: updatedCards }))
+  }
+
+  disableCard(index) {
+    this.disabled_cards[index] = true
   }
 
   resetGameState() {
-    this.setState({ gameState: 0 })
+    this.gameState = 0
   }
 
   incrementGameState() {
-    this.setState({ gameState: this.state.gameState + 1 });
+    this.gameState++
   }
 
   setFirstCardIndex(i) {
-    this.setState({ firstCardIndex: i })
+    this.firstCardIndex = i
   }
 
   setSecondCardIndex(i) {
-    this.setState({ secondCardIndex: i })
+    this.secondCardIndex = i
   }
 
-  setFirstAndSecondCardsContentTheSame() {
-    if (this.getCardContent(this.state.firstCardIndex) === this.getCardContent(this.state.secondCardIndex))
-      this.setState({ comparedCardContentsAreTheSame: true });
-    else
-      this.setState({ comparedCardContentsAreTheSame: false });
+  areCardsContentsEqual(firstIndex, secondIndex) {
+    return this.getCardContent(firstIndex) === this.getCardContent(secondIndex)
   }
 
   getCardContent(i) {
-
-    return this.state.cards_content[i]
+    return this.cards_content[i]
   }
 
 }
