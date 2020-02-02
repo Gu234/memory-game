@@ -92,31 +92,17 @@ export default class extends Component {
   advanceGame(i) {
     switch (this.gameState) {
       case 0:
-        if (this.disabled_cards[i]) break;
-        this.flipCard(i);
-        this.setFirstCardIndex(i);
-        this.incrementGameState();
+        this.runGameFirstStep(i)
         break;
 
       case 1:
-        if (this.disabled_cards[i]) break;
-        if (i === this.firstCardIndex) break;
-        this.flipCard(i);
-        this.setSecondCardIndex(i);
-        if (this.areCardsContentsEqual(this.firstCardIndex, this.secondCardIndex)) {
-          this.disableCard(this.firstCardIndex);
-          this.disableCard(this.secondCardIndex);
-          this.resetGameState();
-          break;
-        }
-        else
-          this.incrementGameState();
+        this.runGameSecondStep(i)
         break;
 
       case 2:
-        this.flipTwoCards(this.firstCardIndex, this.secondCardIndex);
-        this.resetGameState();
+        this.runGameThirdStep()
         break;
+
       default:
         break;
     }
@@ -154,5 +140,34 @@ export default class extends Component {
   getCardContent(i) {
     return this.cards_content[i]
   }
+
+  runGameFirstStep(i) {
+    if (this.disabled_cards[i]) return
+    this.flipCard(i)
+    this.setFirstCardIndex(i)
+    this.incrementGameState()
+
+  }
+
+  runGameSecondStep(i) {
+
+    if (this.disabled_cards[i]) return
+    if (i === this.firstCardIndex) return
+    this.flipCard(i);
+    this.setSecondCardIndex(i);
+    if (this.areCardsContentsEqual(this.firstCardIndex, this.secondCardIndex)) {
+      this.disableCard(this.firstCardIndex);
+      this.disableCard(this.secondCardIndex);
+      this.resetGameState();
+    }
+    else
+      this.incrementGameState();
+  }
+
+  runGameThirdStep() {
+    this.flipTwoCards(this.firstCardIndex, this.secondCardIndex);
+    this.resetGameState();
+  }
+
 
 }
