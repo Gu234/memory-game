@@ -81,9 +81,12 @@ export default class extends Component {
   }
 
   flipCard = (i) => {
-    const updatedCards = [...this.state.cards];
-    updatedCards[i] = !this.state.cards[i];
-    this.setState(() => ({ cards: updatedCards }))
+
+    this.setState((prevState) => {
+      const updatedCards = [...prevState.cards]
+      updatedCards[i] = !prevState.cards[i]
+      return { cards: updatedCards }
+    })
   }
 
   advanceGame(i) {
@@ -120,10 +123,8 @@ export default class extends Component {
   }
 
   flipTwoCards(firstCardIndex, secondCardIndex) {
-    const updatedCards = [...this.state.cards];
-    updatedCards[firstCardIndex] = !this.state.cards[firstCardIndex];
-    updatedCards[secondCardIndex] = !this.state.cards[secondCardIndex];
-    this.setState(() => ({ cards: updatedCards }))
+    this.flipCard(firstCardIndex)
+    this.flipCard(secondCardIndex)
   }
 
   disableCard(index) {
