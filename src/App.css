@@ -15,13 +15,17 @@
   background-color: green;
   border: 1px solid transparent;
   user-select: none;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .back{
   background-color: black;
+  background-image: none;
 }
 
 .hidden{
+  background-image: url('./assets/android-original.svg');
   background-color: gray;
   color: transparent;
 }

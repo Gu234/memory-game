@@ -23,6 +23,7 @@ function shuffle(array) {
 export default class extends Component {
   constructor() {
     super();
+
     const numberOfPairs = 10;
     const disabledCards = Array(numberOfPairs * 2).fill(false);
     const cardsContent = Array(numberOfPairs * 2).fill().map((_, i) => Math.floor(i / 2))
@@ -179,3 +180,4 @@ export default class extends Component {
   }
 
 }
+// ['amazonwebservices','android','angularjs','apache','appcelerator','apple','atom','babel','backbonejs','behance','bitbucket','bower','c','cakephp','ceylon','chrome','clojure','clojurescript','coffeescript','confluence','couchdb','cplusplus','csharp','css3','d3js','debian','devicon','django','docker','doctrine','dot-net','drupal','electron','elm','erlang','express','facebook','firefox','foundation','gimp','git','github','gitlab','go','google','grunt','handlebars','heroku','html5','ie10','inkscape','intellij','ionic','java','javascript','jeet','jetbrains','jquery','krakenjs','linkedin','linux','meteor','mongodb','moodle','mysql','nginx','nodejs','nodewebkit','oracle','php','phpstorm','postgresql','pycharm','python','react','redhat','redis','redux','ruby','rubymine','safari','sass','sequelize','sketch','slack','sourcetree','ssh','stylus','swift','symfony','tomcat','twitter','typescript','vagrant','vim','vuejs','webpack','webstorm','windows8','wordpress','yarn','yii','yunohost']
