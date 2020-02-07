@@ -25,12 +25,7 @@ export default class extends Component {
     super();
     const numberOfPairs = 10;
     const disabledCards = Array(numberOfPairs * 2).fill(false);
-
-    const cardsContent = [];
-    for (let i = 0; i < numberOfPairs; i++) {
-      cardsContent.push(i);
-      cardsContent.push(i);
-    }
+    const cardsContent = Array(numberOfPairs * 2).fill().map((_, i) => Math.floor(i / 2))
     shuffle(cardsContent);
 
     this.state = {
@@ -58,16 +53,25 @@ export default class extends Component {
 
   renderCard = (isVisible, i) => {
     return <div
-      className={this.cardClassName(isVisible)}
+      className={this.cardClassName(isVisible, i)}
       key={Math.random()}
-      onClick={() => this.advanceGame(i)}>{this.state.cardsContent[i]}</div>
+      onClick={() => this.advanceGame(i)}>{this.getCardContent(i)}</div>
   }
 
-  cardClassName(isVisible) {
-    if (isVisible)
-      return 'card'
-    else
-      return 'card hidden'
+  cardClassName(isVisible, i) {
+    const classes = ['card']
+    const { firstCardIndex, secondCardIndex, disabledCards } = this.state
+
+    if (!isVisible)
+      classes.push('hidden')
+
+    if (!this.areCardsContentsEqual(firstCardIndex, secondCardIndex) && this.state.gameState === 2 && (i === firstCardIndex || i === secondCardIndex))
+      classes.push('invalid')
+
+    if (disabledCards[i])
+      classes.push('matched')
+
+    return classes.join(' ')
   }
 
   flipCard = (i) => {
@@ -79,6 +83,7 @@ export default class extends Component {
   }
 
   advanceGame(i) {
+
     switch (this.state.gameState) {
       case 0:
         this.runGameFirstStep(i)
@@ -111,7 +116,7 @@ export default class extends Component {
   }
 
   resetGameState() {
-    this.setState({ gameState: 0 })
+    this.setState({ gameState: 0, firstCardIndex: null, secondCardIndex: null })
 
   }
 
@@ -127,11 +132,12 @@ export default class extends Component {
     this.setState({ secondCardIndex: i })
   }
 
-  areCardsContentsEqual(firstIndex, secondIndex) {
-    return this.getCardContent(firstIndex) === this.getCardContent(secondIndex)
+  areCardsContentsEqual(firstCardIndex, secondCardIndex) {
+    return this.getCardContent(firstCardIndex) === this.getCardContent(secondCardIndex)
   }
 
   getCardContent(i) {
+
     return this.state.cardsContent[i]
   }
 
@@ -143,13 +149,16 @@ export default class extends Component {
   }
 
   runGameSecondStep(i) {
+
     if (this.isCardDisabled(i)) return
     if (i === this.state.firstCardIndex) return
 
+    this.setSecondCardIndex(i);
     this.flipCard(i);
 
     const { firstCardIndex } = this.state
     if (this.areCardsContentsEqual(firstCardIndex, i)) {
+
       this.disableCard(firstCardIndex);
       this.disableCard(i);
       this.resetGameState();
@@ -157,7 +166,6 @@ export default class extends Component {
     else
       this.incrementGameState();
 
-    this.setSecondCardIndex(i);
   }
 
   runGameThirdStep() {
