@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './App.css';
+import './App.scss';
+import 'csshake'
 
 function shuffle(array) {
   let currentIndex = array.length, temporaryValue, randomIndex;
@@ -20,13 +21,31 @@ function shuffle(array) {
   return array;
 }
 
+function getRandomSubset(arr, n) {
+  var result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len)
+    throw new RangeError("getRandomSubset: more elements taken than available");
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
+
 export default class extends Component {
   constructor() {
     super();
 
-    const numberOfPairs = 10;
-    const disabledCards = Array(numberOfPairs * 2).fill(false);
-    const cardsContent = Array(numberOfPairs * 2).fill().map((_, i) => Math.floor(i / 2))
+    const icons = ['amazonwebservices', 'android', 'angularjs', 'apache', 'appcelerator', 'apple', 'atom', 'babel', 'backbonejs', 'behance', 'bitbucket', 'bower', 'c', 'cakephp', 'ceylon', 'chrome', 'clojure', 'clojurescript', 'coffeescript', 'confluence', 'couchdb', 'cplusplus', 'csharp', 'css3', 'd3js', 'debian', 'devicon', 'django', 'docker', 'doctrine', 'dot-net', 'drupal', 'electron', 'elm', 'erlang', 'express', 'facebook', 'firefox', 'foundation', 'gimp', 'git', 'github', 'gitlab', 'go', 'google', 'grunt', 'handlebars', 'heroku', 'html5', 'ie10', 'inkscape', 'intellij', 'ionic', 'java', 'javascript', 'jeet', 'jetbrains', 'jquery', 'krakenjs', 'linkedin', 'linux', 'meteor', 'mongodb', 'moodle', 'mysql', 'nginx', 'nodejs', 'nodewebkit', 'oracle', 'php', 'phpstorm', 'postgresql', 'pycharm', 'python', 'react', 'redhat', 'redis', 'redux', 'ruby', 'rubymine', 'safari', 'sass', 'sequelize', 'sketch', 'slack', 'sourcetree', 'ssh', 'stylus', 'swift', 'symfony', 'tomcat', 'twitter', 'typescript', 'vagrant', 'vim', 'vuejs', 'webpack', 'webstorm', 'windows8', 'wordpress', 'yarn', 'yii', 'yunohost']
+
+    const numberOfPairs = 10,
+      disabledCards = Array(numberOfPairs * 2).fill(false)
+    let cardsContent = getRandomSubset(icons, numberOfPairs)
+
+    cardsContent = cardsContent.concat(cardsContent)
     shuffle(cardsContent);
 
     this.state = {
@@ -53,21 +72,31 @@ export default class extends Component {
   }
 
   renderCard = (isVisible, i) => {
+
     return <div
       className={this.cardClassName(isVisible, i)}
       key={Math.random()}
-      onClick={() => this.advanceGame(i)}>{this.getCardContent(i)}</div>
+      onClick={() => this.advanceGame(i)}>
+      <div className='flip-card-inner'>
+        <div className="flip-card-front">
+
+        </div>
+        <div className="flip-card-back">
+          <img src={require(`./assets/${this.getCardContent(i)}-original.svg`)} alt="Icon" style={{ width: '100px', height: '100px' }} />
+        </div>
+      </div>
+    </div>
   }
 
   cardClassName(isVisible, i) {
-    const classes = ['card']
+    const classes = ['flip-card']
     const { firstCardIndex, secondCardIndex, disabledCards } = this.state
 
-    if (!isVisible)
-      classes.push('hidden')
+    if (isVisible)
+      classes.push('card-visible')
 
-    if (!this.areCardsContentsEqual(firstCardIndex, secondCardIndex) && this.state.gameState === 2 && (i === firstCardIndex || i === secondCardIndex))
-      classes.push('invalid')
+    // if (!this.areCardsContentsEqual(firstCardIndex, secondCardIndex) && this.state.gameState === 2 && (i === firstCardIndex || i === secondCardIndex))
+    //   classes.push('invalid shake-constant shake-short')
 
     if (disabledCards[i])
       classes.push('matched')
@@ -75,7 +104,7 @@ export default class extends Component {
     return classes.join(' ')
   }
 
-  flipCard = (i) => {
+  flipCard(i) {
     this.setState((prevState) => {
       const updatedCards = [...prevState.cards]
       updatedCards[i] = !prevState.cards[i]
@@ -180,4 +209,3 @@ export default class extends Component {
   }
 
 }
-// ['amazonwebservices','android','angularjs','apache','appcelerator','apple','atom','babel','backbonejs','behance','bitbucket','bower','c','cakephp','ceylon','chrome','clojure','clojurescript','coffeescript','confluence','couchdb','cplusplus','csharp','css3','d3js','debian','devicon','django','docker','doctrine','dot-net','drupal','electron','elm','erlang','express','facebook','firefox','foundation','gimp','git','github','gitlab','go','google','grunt','handlebars','heroku','html5','ie10','inkscape','intellij','ionic','java','javascript','jeet','jetbrains','jquery','krakenjs','linkedin','linux','meteor','mongodb','moodle','mysql','nginx','nodejs','nodewebkit','oracle','php','phpstorm','postgresql','pycharm','python','react','redhat','redis','redux','ruby','rubymine','safari','sass','sequelize','sketch','slack','sourcetree','ssh','stylus','swift','symfony','tomcat','twitter','typescript','vagrant','vim','vuejs','webpack','webstorm','windows8','wordpress','yarn','yii','yunohost']
