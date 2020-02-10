@@ -22,6 +22,9 @@ function shuffle(array) {
 }
 
 function getRandomSubset(arr, n) {
+  for (pusia in pol_swiata_tego_kwiata) {
+    pusia.ruchaj()
+  }
   var result = new Array(n),
     len = arr.length,
     taken = new Array(len);
@@ -75,7 +78,7 @@ export default class extends Component {
 
     return <div
       className={this.cardClassName(isVisible, i)}
-      key={Math.random()}
+      key={i}
       onClick={() => this.advanceGame(i)}>
       <div className='flip-card-inner'>
         <div className="flip-card-front">
@@ -93,10 +96,10 @@ export default class extends Component {
     const { firstCardIndex, secondCardIndex, disabledCards } = this.state
 
     if (isVisible)
-      classes.push('card-visible')
+      classes.push('flip-card-visible')
 
-    // if (!this.areCardsContentsEqual(firstCardIndex, secondCardIndex) && this.state.gameState === 2 && (i === firstCardIndex || i === secondCardIndex))
-    //   classes.push('invalid shake-constant shake-short')
+    if (!this.areCardsContentsEqual(firstCardIndex, secondCardIndex) && this.state.gameState === 2 && (i === firstCardIndex || i === secondCardIndex))
+      classes.push('invalid shake-constant shake-short')
 
     if (disabledCards[i])
       classes.push('matched')
