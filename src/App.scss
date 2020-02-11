@@ -1,15 +1,20 @@
 @import '~csshake';
 @import '~csshake/scss/csshake-hard.scss';
 
+body{
+  background-color: #93e1d8;
+}
 .container {
-    padding-top: 100px;
-    max-width: 700px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 0 auto;
+  max-width: 740px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 100px auto 0 auto;
+  border: 5px solid black;
+  padding: 50px;
+  background-color: #ffa69e;
+
   }
-  
   .matched .flip-card-back{
     background-color: greenyellow;
   }
@@ -31,8 +36,8 @@
   
   .flip-card {
     background-color: transparent;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border: 1px solid #f1f1f1;
     perspective: 1000px; /* Remove this if you don't want the 3D effect */
   }
@@ -63,6 +68,9 @@
   }
   
   .flip-card-back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transition: 0.6s;
 
     background-color: white;
