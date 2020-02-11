@@ -41,7 +41,7 @@ export default class extends Component {
 
     const icons = ['amazonwebservices', 'android', 'angularjs', 'apache', 'appcelerator', 'apple', 'atom', 'babel', 'backbonejs', 'behance', 'bitbucket', 'bower', 'c', 'cakephp', 'ceylon', 'chrome', 'clojure', 'clojurescript', 'coffeescript', 'confluence', 'couchdb', 'cplusplus', 'csharp', 'css3', 'd3js', 'debian', 'devicon', 'django', 'docker', 'doctrine', 'dot-net', 'drupal', 'electron', 'elm', 'erlang', 'express', 'facebook', 'firefox', 'foundation', 'gimp', 'git', 'github', 'gitlab', 'go', 'google', 'grunt', 'handlebars', 'heroku', 'html5', 'ie10', 'inkscape', 'intellij', 'ionic', 'java', 'javascript', 'jeet', 'jetbrains', 'jquery', 'krakenjs', 'linkedin', 'linux', 'meteor', 'mongodb', 'moodle', 'mysql', 'nginx', 'nodejs', 'nodewebkit', 'oracle', 'php', 'phpstorm', 'postgresql', 'pycharm', 'python', 'react', 'redhat', 'redis', 'redux', 'ruby', 'rubymine', 'safari', 'sass', 'sequelize', 'sketch', 'slack', 'sourcetree', 'ssh', 'stylus', 'swift', 'symfony', 'tomcat', 'twitter', 'typescript', 'vagrant', 'vim', 'vuejs', 'webpack', 'webstorm', 'windows8', 'wordpress', 'yarn', 'yii', 'yunohost']
 
-    const numberOfPairs = 2,
+    const numberOfPairs = 12,
       disabledCards = Array(numberOfPairs * 2).fill(false)
     let cardsContent = getRandomSubset(icons, numberOfPairs)
 
@@ -81,14 +81,18 @@ export default class extends Component {
 
   renderEndScreen() {
     return <div>
-      <div>
-        {this.state.stepCounter}
-
+      <div className='endgame-banner'>congratulations!</div>
+      <div className='endgame-stepsTaken'>
+        You revealed cards {this.state.stepCounter} times.
       </div>
-      <div>
-        <button>play again</button>
+      <div className='endgame-playAgain'>
+        <button onClick={this.refreshWindow}>Play again</button>
       </div>
     </div>
+  }
+
+  refreshWindow() {
+    document.location.reload(true)
   }
 
   renderCards() {

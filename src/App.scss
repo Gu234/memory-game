@@ -77,3 +77,36 @@ body{
     color: white;
     transform: rotateY(180deg);
   }
+
+  .endgame-banner{
+    text-transform: uppercase;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 50px;
+  }
+
+  .endgame-stepsTaken{
+    text-align: center;
+    font-size: 25px;
+    margin: 50px;
+
+  }
+
+  .endgame-playAgain{
+    display: flex;
+    justify-content: center;
+    button{
+      font-size: 25px;
+      background-color: #462255;
+      border: none;
+      color: white;
+      padding: 20px;
+      &:focus {
+        outline:none;
+      }
+      &:hover{
+        cursor: pointer;
+        background-color: #674a73;
+      }
+    }
+  }
