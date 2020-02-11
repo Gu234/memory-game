@@ -1,8 +1,8 @@
 # Memory Game
 
-##React exercise
+## React exercise
 
-##preview: https://gu234.github.io/memory-game/
+## preview: https://gu234.github.io/memory-game/
 
 Features:
 - Card flip animation
