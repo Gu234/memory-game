@@ -22,9 +22,6 @@ function shuffle(array) {
 }
 
 function getRandomSubset(arr, n) {
-  for (pusia in pol_swiata_tego_kwiata) {
-    pusia.ruchaj()
-  }
   var result = new Array(n),
     len = arr.length,
     taken = new Array(len);
@@ -44,7 +41,7 @@ export default class extends Component {
 
     const icons = ['amazonwebservices', 'android', 'angularjs', 'apache', 'appcelerator', 'apple', 'atom', 'babel', 'backbonejs', 'behance', 'bitbucket', 'bower', 'c', 'cakephp', 'ceylon', 'chrome', 'clojure', 'clojurescript', 'coffeescript', 'confluence', 'couchdb', 'cplusplus', 'csharp', 'css3', 'd3js', 'debian', 'devicon', 'django', 'docker', 'doctrine', 'dot-net', 'drupal', 'electron', 'elm', 'erlang', 'express', 'facebook', 'firefox', 'foundation', 'gimp', 'git', 'github', 'gitlab', 'go', 'google', 'grunt', 'handlebars', 'heroku', 'html5', 'ie10', 'inkscape', 'intellij', 'ionic', 'java', 'javascript', 'jeet', 'jetbrains', 'jquery', 'krakenjs', 'linkedin', 'linux', 'meteor', 'mongodb', 'moodle', 'mysql', 'nginx', 'nodejs', 'nodewebkit', 'oracle', 'php', 'phpstorm', 'postgresql', 'pycharm', 'python', 'react', 'redhat', 'redis', 'redux', 'ruby', 'rubymine', 'safari', 'sass', 'sequelize', 'sketch', 'slack', 'sourcetree', 'ssh', 'stylus', 'swift', 'symfony', 'tomcat', 'twitter', 'typescript', 'vagrant', 'vim', 'vuejs', 'webpack', 'webstorm', 'windows8', 'wordpress', 'yarn', 'yii', 'yunohost']
 
-    const numberOfPairs = 10,
+    const numberOfPairs = 2,
       disabledCards = Array(numberOfPairs * 2).fill(false)
     let cardsContent = getRandomSubset(icons, numberOfPairs)
 
@@ -52,6 +49,7 @@ export default class extends Component {
     shuffle(cardsContent);
 
     this.state = {
+      stepCounter: 0,
       gameState: 0,
       firstCardIndex: null,
       secondCardIndex: null,
@@ -65,9 +63,32 @@ export default class extends Component {
   render() {
     return <>
       <div className="container">
-        {this.renderCards()}
+        {this.renderGame()}
       </div>
     </>
+  }
+
+  renderGame() {
+    if (this.gameEnded())
+      return this.renderEndScreen()
+    else
+      return this.renderCards()
+  }
+
+  gameEnded() {
+    return this.state.disabledCards.reduce((acc, next) => acc && next)
+  }
+
+  renderEndScreen() {
+    return <div>
+      <div>
+        {this.state.stepCounter}
+
+      </div>
+      <div>
+        <button>play again</button>
+      </div>
+    </div>
   }
 
   renderCards() {
@@ -105,6 +126,12 @@ export default class extends Component {
       classes.push('matched')
 
     return classes.join(' ')
+  }
+
+  incrementStepCounter() {
+    this.setState({
+      stepCounter: this.state.stepCounter + 1
+    })
   }
 
   flipCard(i) {
@@ -176,6 +203,8 @@ export default class extends Component {
 
   runGameFirstStep(i) {
     if (this.isCardDisabled(i)) return
+
+    this.incrementStepCounter();
     this.flipCard(i)
     this.setFirstCardIndex(i)
     this.incrementGameState()
@@ -186,6 +215,7 @@ export default class extends Component {
     if (this.isCardDisabled(i)) return
     if (i === this.state.firstCardIndex) return
 
+    this.incrementStepCounter();
     this.setSecondCardIndex(i);
     this.flipCard(i);
 
